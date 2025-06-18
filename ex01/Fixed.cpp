@@ -1,5 +1,6 @@
 #include "Fixed.hpp"
 #include <iostream>
+#include <cmath>
 
 
 Fixed::Fixed() : _numberValue(0)
@@ -11,7 +12,7 @@ Fixed::Fixed(const Fixed &other)
 {
 	std::cout << "Copy constructor called" << std::endl;
 	if (this != &other)
-		this->_numberValue = other.getRawBits();
+		this->_numberValue = other._numberValue;
 }
 
 Fixed::Fixed (const int number)
@@ -22,7 +23,7 @@ Fixed::Fixed (const int number)
 
 Fixed::Fixed(const float number)
 {
-	_numberValue = (int)(number * (1 << _fractional_bits));
+	_numberValue = (int)roundf(number * (1 << _fractional_bits));
 	std::cout << "Float constructor called" << std::endl;
 }
 
