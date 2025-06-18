@@ -1,5 +1,6 @@
 #include "Fixed.hpp"
 #include <iostream>
+#include <cmath>
 
 
 Fixed::Fixed() : _numberValue(0)
@@ -11,7 +12,7 @@ Fixed::Fixed(const Fixed &other)
 {
 	std::cout << "Copy constructor called" << std::endl;
 	if (this != &other)
-		this->_numberValue = other.getRawBits();
+		this->_numberValue = other._numberValue;
 }
 
 Fixed::Fixed (const int number)
@@ -22,7 +23,7 @@ Fixed::Fixed (const int number)
 
 Fixed::Fixed(const float number)
 {
-	_numberValue = (int)(number * (1 << _fractional_bits));
+	_numberValue = (int)roundf(number * (1 << _fractional_bits));
 	std::cout << "Float constructor called" << std::endl;
 }
 
@@ -63,52 +64,52 @@ int Fixed::toInt(void) const
 
 bool Fixed::operator>(const Fixed &fixed) const
 {
-	return _numberValue > fixed.getRawBits();
+	return _numberValue > fixed._numberValue;
 }
 
 bool Fixed::operator<(const Fixed &fixed) const
 {
-	return _numberValue < fixed.getRawBits();
+	return _numberValue < fixed._numberValue;
 }
 
 bool Fixed::operator>=(const Fixed &fixed) const
 {
-	return _numberValue >= fixed.getRawBits();
+	return _numberValue >= fixed._numberValue;
 }
 
 bool Fixed::operator<=(const Fixed &fixed) const
 {
-	return _numberValue <= fixed.getRawBits();
+	return _numberValue <= fixed._numberValue;
 }
 
 bool Fixed::operator==(const Fixed &fixed) const
 {
-	return _numberValue == fixed.getRawBits();
+	return _numberValue == fixed._numberValue;
 }
 
 bool Fixed::operator!=(const Fixed &fixed) const
 {
-	return _numberValue != fixed.getRawBits();
+	return _numberValue != fixed._numberValue;
 }
 
 Fixed Fixed::operator+(const Fixed &fixed) const
 {
 	Fixed result;
-	result.setRawBits(_numberValue + fixed.getRawBits());
+	result.setRawBits(_numberValue + fixed._numberValue);
 	return result;
 }
 
 Fixed Fixed::operator-(const Fixed &fixed) const
 {
 	Fixed result;
-	result.setRawBits(_numberValue - fixed.getRawBits());
+	result.setRawBits(_numberValue - fixed._numberValue);
 	return result;
 }
 
 Fixed Fixed::operator*(const Fixed &fixed) const
 {
 	Fixed result;
-	result.setRawBits((_numberValue * fixed.getRawBits()) / 1 << _fractional_bits);
+	result.setRawBits((_numberValue * fixed._numberValue) / (1 << _fractional_bits));
 	return result;
 }
 
@@ -116,9 +117,9 @@ Fixed Fixed::operator/(const Fixed &fixed) const
 {
 	Fixed result;
 	
-	if (result.getRawBits() == 0)
+	if (fixed._numberValue == 0)
 		throw std::invalid_argument("Error: Dividing by zero");
-	result.setRawBits((_numberValue / 1 << _fractional_bits) / fixed.getRawBits());
+	result.setRawBits((_numberValue * (1 << _fractional_bits)) / fixed._numberValue);
 	return result;
 }
 
@@ -130,8 +131,7 @@ Fixed &Fixed::operator++()
 
 Fixed Fixed::operator++(int)
 {
-	Fixed tmp;
-	tmp.setRawBits(_fractional_bits);
+	Fixed tmp(*this);
 	_numberValue++;
 	return tmp;
 }
@@ -144,8 +144,7 @@ Fixed &Fixed::operator--()
 
 Fixed Fixed::operator--(int)
 {
-	Fixed tmp;
-	tmp.setRawBits(_fractional_bits);
+	Fixed tmp(*this);
 	_numberValue--;
 	return tmp;
 }
