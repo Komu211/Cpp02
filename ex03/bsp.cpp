@@ -16,8 +16,6 @@ bool bsp(Point const a, Point const b, Point const c, Point const point)
 
 	Fixed denom = ((by - cy) * (ax - cx) + (cx - bx) * (ay - cy));
 
-	std::cout << "denom: " << denom.toFloat() << std::endl;
-
 	float alpha = (((by - cy) * (px - cx) + (cx - bx) * (py - cy)) / denom).toFloat();
 	float beta = (((cy - ay) * (px - cx) + (ax - cx) * (py - cy)) / denom).toFloat();
 	float gamma = 1 - alpha - beta;
